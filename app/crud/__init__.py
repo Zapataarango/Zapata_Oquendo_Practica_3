@@ -1,1 +1,4 @@
-from .crud import create_personal, get_all_personal
+from .usuario import Usuario
+from .laboratorio import Laboratorio
+from .servicio import Servicio
+from .ticket import Ticket

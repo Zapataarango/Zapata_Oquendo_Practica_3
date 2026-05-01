@@ -3,7 +3,7 @@ from app.api.laboratorios import router as router_laboratorios
  
  
 app = FastAPI(
-    title="API para servicios web",
+    title="Gestión universitaria",
     version="0.1",
     description="API desarrollada para el curso de Aplicaciones y servicios"
 )
