@@ -1,14 +1,13 @@
-from sqlalchemy import Column, Integer, String, Boolean, text
-from sqlalchemy.orm import relationship
-from app.db import Base
+from sqlalchemy.orm import Session
+from app.models import Servicio
+from app.schemas.servicio import ServicioCreate
 
-class Servicio(Base):
-    __tablename__ = "servicios"
-    __table_args__ = {"schema": "Laboratorios"}
+def get_servicios(db: Session):
+    return db.query(Servicio).filter(Servicio.activo == True).all()
 
-    id_servicio = Column(Integer, primary_key=True, index=True)
-    nombre = Column(String(100), nullable=False)
-    descripcion = Column(String(255), nullable=True)
-    activo = Column(Boolean, nullable=False, server_default=text("true"))
-
-    tickets = relationship("Ticket", back_populates="servicio")
+def crear_servicio(db: Session, servicio: ServicioCreate):
+    db_servicio = Servicio(**servicio.model_dump())
+    db.add(db_servicio)
+    db.commit()
+    db.refresh(db_servicio)
+    return db_servicio

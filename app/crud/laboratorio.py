@@ -1,14 +1,16 @@
-from sqlalchemy import Column, Integer, String, Boolean, text
-from sqlalchemy.orm import relationship
-from app.db import Base
+from sqlalchemy.orm import Session
+from app.models import Laboratorio
+from app.schemas.laboratorio import LaboratorioCreate
 
-class Laboratorio(Base):
-    __tablename__ = "laboratorios"
-    __table_args__ = {"schema": "Laboratorios"}
+def get_laboratorios(db: Session):
+    return db.query(Laboratorio).all()
 
-    id_laboratorio = Column(Integer, primary_key=True, index=True)
-    nombre = Column(String(100), nullable=False)
-    ubicacion = Column(String(255), nullable=False)
-    activo = Column(Boolean, nullable=False, server_default=text("true"))
+def crear_laboratorio(db: Session, laboratorio: LaboratorioCreate):
+    db_lab = Laboratorio(**laboratorio.dict())
+    db.add(db_lab)
+    db.commit()
+    db.refresh(db_lab)
+    return db_lab
 
-    tickets = relationship("Ticket", back_populates="laboratorio")
+def get_laboratorio_by_id(db: Session, id_laboratorio: int):
+    return db.query(Laboratorio).filter(Laboratorio.id_laboratorio == id_laboratorio).first()
