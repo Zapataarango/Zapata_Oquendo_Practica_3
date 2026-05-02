@@ -2,343 +2,321 @@
 
 ## Características Principales
 
+* Gestión de laboratorios
+* Gestión de servicios técnicos
+* Gestión de tickets de soporte
+* Control de acceso basado en roles (RBAC)
+* Autenticación mediante JWT
+
+---
+
 ## Tecnologías Utilizadas
 
-El proyecto se apoya en un stack tecnológico moderno centrado en la velocidad de desarrollo, la seguridad y la validación de datos.
+El proyecto se apoya en un stack moderno enfocado en rendimiento, seguridad y validación de datos.
 
 ### Núcleo del Sistema
-* **Python (v3.10+)**: Lenguaje de programación base del ecosistema.
-* **FastAPI (v0.135.1)**: Framework web de alto rendimiento para la construcción de la API, basado en estándares OpenAPI.
-* **SQLAlchemy (v2.0.48)**: Toolkit SQL y mapeador objeto-relacional (ORM) para la gestión de la persistencia de datos.
-* **Uvicorn (v0.41.0)**: Servidor ASGI de alta velocidad utilizado para la ejecución y despliegue de la aplicación.
+
+* **Python (v3.10+)**
+* **FastAPI (v0.135.1)**: Framework de alto rendimiento basado en OpenAPI
+* **SQLAlchemy (v2.0.48)**: ORM para persistencia de datos
+* **Uvicorn (v0.41.0)**: Servidor ASGI
 
 ### Validación y Datos
-* **Pydantic (v2.12.5)**: Motor de validación de datos y gestión de configuraciones mediante modelos de datos rigurosos.
-* **PostgreSQL / Psycopg2 (v2.9.11)**: Sistema de gestión de bases de datos relacional y adaptador binario para la comunicación con Python.
+
+* **Pydantic (v2.12.5)**: Validación de datos
+* **PostgreSQL / Psycopg2 (v2.9.11)**: Base de datos relacional
 
 ### Seguridad y Autenticación
-* **Python-Jose (v3.5.0)**: Implementación de JOSE (JSON Object Signing and Encryption) para la generación y validación de tokens JWT.
-* **Passlib (v1.7.4)** y **Bcrypt (v4.0.1)**: Librerías especializadas en el hashing seguro de contraseñas y gestión de esquemas de cifrado.
-* **Cryptography (v47.0.0)**: Soporte de primitivas criptográficas para asegurar la integridad de las comunicaciones y datos.
 
-### Utilidades y Entorno
-* **Python-Dotenv (v1.2.2)**: Gestión de variables de entorno para la configuración segura de credenciales mediante archivos `.env`.
-* **Python-Multipart (v0.0.22)**: Requerido para el procesamiento de datos de formularios y carga de archivos en peticiones HTTP.
-* **Httpx (v0.28.1)**: Cliente HTTP de última generación para realizar peticiones asíncronas entre servicios.
+* **Python-Jose (v3.5.0)**: Manejo de JWT
+* **Passlib (v1.7.4)** + **Bcrypt (v4.0.1)**: Hashing de contraseñas
+* **Cryptography (v47.0.0)**: Funciones criptográficas
+
+### Utilidades
+
+* **Python-Dotenv (v1.2.2)**: Variables de entorno
+* **Python-Multipart (v0.0.22)**: Manejo de formularios
+* **Httpx (v0.28.1)**: Cliente HTTP async
+
+---
 
 ## Integrantes
-* **FELIPE ZAPATA ARANGO**
-* **SAMUEL OQUENDO QUINTERO**
-## Aplicaciones y Servicios Web 
-## 02/05/2026
 
-## Pasos para configurar el entorno virtual
-* Descargar e instalar una versión Python 3.+
-* En otro caso, instalar por medio del archivo requeriments.txt en la raíz del proyecto por medio del comando pip install -r requirements.txt
-* Ejecutar el comando python /m venv venv para crear el entorno virtual
-* Ejecutar el comando venv\Scripts\activate
-* Teniendo las dependencias instaladas, ejecutar uvicorn app.main:app --reload y abrir el navegador de preferencia en http://127.0.0.1:8000/docs
-
-### Documentación de Endpoints:
-
-# Documentación de API: Módulo de Laboratorios
-
-Este módulo gestiona los espacios físicos (laboratorios) donde se prestan los servicios técnicos. Utiliza un control de acceso basado en roles (RBAC) mediante Scopes de OAuth2.
-
-## 📋 Resumen de Permisos
-
-| Acción | Endpoint | Método | Scope Requerido | Nivel de Acceso |
-| :--- | :--- | :--- | :--- | :--- |
-| **Crear** | `/laboratorios/` | `POST` | `laboratorios:create` | Administrador |
-| **Listar** | `/laboratorios/` | `GET` | `laboratorios:read` | Todos los Roles |
-| **Consultar** | `/laboratorios/{id}` | `GET` | `laboratorios:read` | Todos los Roles |
-| **Eliminar** | `/laboratorios/{id}` | `DELETE` | `laboratorios:delete` | **Solo Administrador** |
+* **Felipe Zapata Arango**
+* **Samuel Oquendo Quintero**
 
 ---
 
-## Endpoints Detallados
+## Fecha
 
-## Laboratorio
+02/05/2026
+
+---
+
+## Configuración del Entorno
+
+```bash
+# Crear entorno virtual
+python -m venv venv
+
+# Activar entorno (Windows)
+venv\Scripts\activate
+
+# Instalar dependencias
+pip install -r requirements.txt
+
+# Ejecutar aplicación
+uvicorn app.main:app --reload
+```
+
+Accede a la documentación en:
+http://127.0.0.1:8000/docs
+
+---
+
+# Documentación de API
+
+---
+
+# Módulo de Laboratorios
+
+Gestiona los espacios físicos donde se prestan servicios técnicos.
+
+## Permisos
+
+| Acción    | Endpoint             | Método | Scope               | Acceso |
+| --------- | -------------------- | ------ | ------------------- | ------ |
+| Crear     | `/laboratorios/`     | POST   | laboratorios:create | Admin  |
+| Listar    | `/laboratorios/`     | GET    | laboratorios:read   | Todos  |
+| Consultar | `/laboratorios/{id}` | GET    | laboratorios:read   | Todos  |
+| Eliminar  | `/laboratorios/{id}` | DELETE | laboratorios:delete | Admin  |
+
+---
+
+## Endpoints
 
 ### 1. Crear Laboratorio
-Permite registrar una nueva sede o laboratorio en el sistema.
 
-*   **URL:** `/laboratorios/`
-*   **Método:** `POST`
-*   **Cabecera Obligatoria:** `Authorization: Bearer <token>`
-*   **Cuerpo (JSON):**
-    
 ```json
-    {
-      "nombre": "Laboratorio de Inteligencia Artificial",
-      "ubicacion": "Bloque M, Oficina 301",
-      "descripcion": "Área destinada a investigación y desarrollo de modelos"
-    }
-    ```
-*   **Respuestas:**
-    *   **200 OK:** Devuelve el objeto creado con su respectivo `id_laboratorio`.
-    *   **403 Forbidden:** El token no cuenta con el scope `laboratorios:create`.
+POST /laboratorios/
+Authorization: Bearer <token>
+
+{
+  "nombre": "Laboratorio de IA",
+  "ubicacion": "Bloque M, Oficina 301",
+  "descripcion": "Investigación en IA"
+}
+```
+
+### 2. Listar Laboratorios
+
+```json
+GET /laboratorios/
+```
+
+### 3. Obtener por ID
+
+```json
+GET /laboratorios/{id}
+```
+
+### 4. Eliminar
+
+```json
+DELETE /laboratorios/{id}
+```
 
 ---
 
-### 2. Listar Todos los Laboratorios
-Retorna una colección de todos los laboratorios activos en la base de datos.
+## Errores Comunes
 
-*   **URL:** `/laboratorios/`
-*   **Método:** `GET`
-*   **Seguridad:** Requiere scope `laboratorios:read`.
-*   **Respuestas:**
-    *   **200 OK:**
-        ```json
-        [
-          {
-            "id_laboratorio": 1,
-            "nombre": "Redes de Datos",
-            "ubicacion": "Bloque A",
-            "descripcion": "Mantenimiento de infraestructura"
-          }
-        ]
-        ```
+| Código | Descripción     |
+| ------ | --------------- |
+| 401    | Token inválido  |
+| 403    | Sin permisos    |
+| 422    | Datos inválidos |
 
 ---
 
-### 3. Obtener Laboratorio por ID
-Recupera la información detallada de un laboratorio específico.
+# Módulo de Servicios
 
-*   **URL:** `/laboratorios/{id_laboratorio}`
-*   **Método:** `GET`
-*   **Parámetros de Path:** `id_laboratorio` (Integer)
-*   **Respuestas:**
-    *   **200 OK:** Objeto `LaboratorioOut`.
-    *   **404 Not Found:** El ID ingresado no existe.
+Gestiona el catálogo de servicios técnicos.
 
----
+## Permisos
 
-### 4. Eliminar Laboratorio
-Acción crítica para dar de baja un laboratorio. Este endpoint está restringido exclusivamente a usuarios con rol de administrador.
-
-*   **URL:** `/laboratorios/{id_laboratorio}`
-*   **Método:** `DELETE`
-*   **Seguridad:** Requiere scope `laboratorios:delete`.
-*   **Respuestas:**
-    *   **204 No Content:** Eliminación exitosa (sin cuerpo de respuesta).
-    *   **403 Forbidden:** El usuario no tiene el permiso necesario.
-    *   **404 Not Found:** El laboratorio ya no existe o el ID es incorrecto.
+| Acción    | Endpoint          | Método | Scope            | Acceso |
+| --------- | ----------------- | ------ | ---------------- | ------ |
+| Crear     | `/servicios/`     | POST   | servicios:create | Admin  |
+| Listar    | `/servicios/`     | GET    | servicios:read   | Todos  |
+| Consultar | `/servicios/{id}` | GET    | servicios:read   | Todos  |
+| Eliminar  | `/servicios/{id}` | DELETE | servicios:delete | Admin  |
 
 ---
 
-## ⚠️ Errores Comunes
+## Endpoints
 
-| Código | Mensaje | Causa |
-| :--- | :--- | :--- |
-| **401** | `Token inválido o expirado` | El token ha caducado o el formato es incorrecto. |
-| **403** | `Not enough permissions` | El rol del usuario no tiene el scope asignado en el sistema. |
-| **422** | `Unprocessable Entity` | Los datos enviados en el JSON no coinciden con el esquema requerido. |
+### 1. Crear Servicio
 
-## Servicio
+```json
+POST /servicios/
 
-# Documentación de API: Módulo de Servicios
+{
+  "nombre": "Mantenimiento Preventivo",
+  "descripcion": "Optimización de hardware",
+  "id_laboratorio": 1
+}
+```
 
-Este módulo gestiona el catálogo de servicios técnicos disponibles (ej. Mantenimiento, Instalación, Soporte de Software) que pueden ser solicitados mediante tickets.
+### 2. Listar Servicios
 
-## 📋 Resumen de Permisos
+```json
+GET /servicios/
+```
 
-| Acción | Endpoint | Método | Scope Requerido | Nivel de Acceso |
-| :--- | :--- | :--- | :--- | :--- |
-| **Crear** | `/servicios/` | `POST` | `servicios:create` | Administrador |
-| **Listar** | `/servicios/` | `GET` | `servicios:read` | Todos los Roles |
-| **Consultar** | `/servicios/{id}` | `GET` | `servicios:read` | Todos los Roles |
-| **Eliminar** | `/servicios/{id}` | `DELETE` | `servicios:delete` | **Solo Administrador** |
+### 3. Obtener por ID
 
----
+```json
+GET /servicios/{id}
+```
 
-### 2. Crear Servicio
-Registra un nuevo tipo de servicio en el catálogo del sistema.
+### 4. Eliminar
 
-*   **URL:** `/servicios/`
-*   **Método:** `POST`
-*   **Cabecera Obligatoria:** `Authorization: Bearer <token>`
-*   **Cuerpo (JSON):**
-    ```json
-    {
-      "nombre": "Mantenimiento Preventivo",
-      "descripcion": "Limpieza física y optimización de hardware",
-      "id_laboratorio": 1
-    }
-    ```
-*   **Respuestas:**
-    *   **200 OK:** Devuelve el objeto `ServicioOut` creado.
-    *   **403 Forbidden:** El usuario no posee el scope `servicios:create`.
+```json
+DELETE /servicios/{id}
+```
 
 ---
 
-### 2. Listar Todos los Servicios
-Obtiene la lista completa de servicios configurados para todos los laboratorios.
+## Consideraciones
 
-*   **URL:** `/servicios/`
-*   **Método:** `GET`
-*   **Seguridad:** Requiere scope `servicios:read`.
-*   **Respuestas:**
-    *   **200 OK:**
-        ```json
-        [
-          {
-            "id_servicio": 1,
-            "nombre": "Instalación de Software",
-            "descripcion": "Configuración de SO y programas base",
-            "id_laboratorio": 2
-          }
-        ]
-        ```
+Al eliminar un servicio, asegúrate de que no tenga tickets asociados para evitar errores de integridad referencial.
 
 ---
 
-### 3. Obtener Servicio por ID
-Consulta la información específica de un servicio mediante su identificador.
+# Módulo de Tickets
 
-*   **URL:** `/servicios/{id_servicio}`
-*   **Método:** `GET`
-*   **Parámetros de Path:** `id_servicio` (Integer)
-*   **Respuestas:**
-    *   **200 OK:** Objeto detallado del servicio.
-    *   **404 Not Found:** El servicio con el ID especificado no existe.
+Gestiona el ciclo de vida de los requerimientos.
 
----
+## Permisos
 
-### 4. Eliminar Servicio
-Remueve un servicio del catálogo. Restringido a usuarios con permisos de administración.
-
-*   **URL:** `/servicios/{id_servicio}`
-*   **Método:** `DELETE`
-*   **Seguridad:** Requiere scope `servicios:delete`.
-*   **Respuestas:**
-    *   **204 No Content:** Eliminación exitosa.
-    *   **403 Forbidden:** El token no tiene permisos suficientes para borrar registros.
-    *   **404 Not Found:** El ID del servicio no fue encontrado en el sistema.
+| Acción     | Endpoint               | Método | Scope          | Roles              |
+| ---------- | ---------------------- | ------ | -------------- | ------------------ |
+| Crear      | `/tickets/`            | POST   | tickets:create | Solicitante, Admin |
+| Listar     | `/tickets/`            | GET    | tickets:read   | Todos              |
+| Consultar  | `/tickets/{id}`        | GET    | tickets:read   | Todos              |
+| Actualizar | `/tickets/{id}/estado` | PATCH  | tickets:update | Técnicos/Admin     |
+| Eliminar   | `/tickets/{id}`        | DELETE | tickets:delete | Admin              |
 
 ---
 
-## ⚠️ Consideraciones de Integración
-
-> [!NOTE]
-> Al eliminar un servicio, asegúrese de que no existan tickets activos vinculados a dicho ID para mantener la integridad referencial de la base de datos (según la configuración de su base de datos, esto podría lanzar un error de restricción de llave foránea).
-
-# Documentación de API: Módulo de Tickets
-
-Este módulo es el núcleo del sistema y permite gestionar el ciclo de vida de los requerimientos de soporte técnico, desde su creación hasta su finalización.
-
-## 📋 Resumen de Permisos y Flujo
-
-| Acción | Endpoint | Método | Scope Requerido | Roles Autorizados |
-| :--- | :--- | :--- | :--- | :--- |
-| **Crear** | `/tickets/` | `POST` | `tickets:create` | Solicitante, Admin |
-| **Listar** | `/tickets/` | `GET` | `tickets:read` | Todos los Roles |
-| **Consultar** | `/tickets/{id}` | `GET` | `tickets:read` | Todos los Roles |
-| **Actualizar Estado**| `/tickets/{id}/estado`| `PATCH` | `tickets:update` | Admin, Responsable, Técnico, Auxiliar |
-| **Eliminar** | `/tickets/{id}` | `DELETE` | `tickets:delete` | **Solo Administrador** |
-
----
-
-## Ticket
+## Endpoints
 
 ### 1. Crear Ticket
-Permite a un solicitante o administrador abrir un nuevo requerimiento de soporte.
 
-*   **URL:** `/tickets/`
-*   **Método:** `POST`
-*   **Cuerpo (JSON):**
-    
 ```json
-    {
-      "titulo": "Falla en conexión de red",
-      "descripcion": "El equipo no obtiene dirección IP por DHCP",
-      "prioridad": "Alta",
-      "id_laboratorio": 1,
-      "id_servicio": 2,
-      "id_solicitante": 5
-    }
-    ```
-*   **Estado Inicial:** El ticket se crea automáticamente con el estado `solicitado`.
+POST /tickets/
+
+{
+  "titulo": "Falla de red",
+  "descripcion": "No hay IP",
+  "prioridad": "Alta",
+  "id_laboratorio": 1,
+  "id_servicio": 2,
+  "id_solicitante": 5
+}
+```
+
+Estado inicial: `solicitado`
 
 ---
 
 ### 2. Listar Tickets
-Retorna la lista de tickets. 
-*Nota: Según la lógica de negocio, los solicitantes verán sus propios tickets, mientras que los administradores y técnicos podrán ver todos o los asignados.*
 
-*   **URL:** `/tickets/`
-*   **Método:** `GET`
-*   **Seguridad:** Requiere scope `tickets:read`.
+```json
+GET /tickets/
+```
 
 ---
 
-### 3. Actualizar Estado (Gestión de Flujo)
-Este endpoint permite cambiar el estado del ticket (ej. de `solicitado` a `en proceso` o `terminado`).
+### 3. Actualizar Estado
 
-*   **URL:** `/tickets/{id_ticket}/estado`
-*   **Método:** `PATCH`
-*   **Cuerpo (JSON):**
-    ```json
-    {
-      "estado": "en_proceso",
-      "observacion_tecnico": "Se procede a revisar el cableado estructurado",
-      "id_asignado": 3
-    }
-    ```
-*   **Estados permitidos:** `solicitado`, `recibido`, `en_proceso`, `en_revision`, `terminado`.
+```json
+PATCH /tickets/{id}/estado
 
----
+{
+  "estado": "en_proceso",
+  "observacion_tecnico": "Revisión de cableado",
+  "id_asignado": 3
+}
+```
 
-### 4. Eliminar Ticket
-Elimina físicamente el registro del ticket de la base de datos.
+Estados permitidos:
 
-*   **URL:** `/tickets/{id_ticket}`
-*   **Método:** `DELETE`
-*   **Seguridad:** Requiere scope `tickets:delete` (Restringido a **Admin**).
-*   **Respuestas:**
-    *   **204 No Content:** Eliminación exitosa.
-    *   **404 Not Found:** El ticket no existe.
+* solicitado
+* recibido
+* en_proceso
+* en_revision
+* terminado
 
 ---
 
-## Estados del Sistema
+### 4. Eliminar
 
-El campo `estado` dentro de este módulo sigue la siguiente progresión lógica:
-1.  **Solicitado:** Creado por el usuario.
-2.  **Recibido:** Validado por el Responsable Técnico.
-3.  **Asignado:** El técnico está trabajando en la solución.
-4.  **En Revisión:** La solución está siendo verificada.
-5.  **Terminado:** El servicio ha sido completado con éxito.
+```json
+DELETE /tickets/{id}
+```
 
 ---
 
-## ⚠️ Errores Comunes
-*   **403 Forbidden:** El usuario intenta actualizar un estado para el cual su rol no tiene permiso (ej. un Solicitante intentando pasar un ticket a `recibido`).
-*   **422 Unprocessable Entity:** El valor del campo `estado` no coincide con los valores permitidos en el esquema.
+## Flujo de Estados
 
+1. Solicitado
+2. Recibido
+3. Asignado
+4. En revisión
+5. Terminado
 
-### Evidencias: 
+---
 
-##Admin
+## Errores
 
-# Listar tickets admin
-![alt text](image.png)
+* 403: Sin permisos
+* 422: Estado inválido
 
-# Crear usuario como admin
-![alt text](image-4.png)
+---
 
-# Listar usuarios
-![alt text](image-5.png)
+# Evidencias
 
-#Asignas Ticket como usuario 
-![alt text](image-1.png)
+## Admin
 
-#Crear ticket como usuario 
-![alt text](image-2.png)
+### Listar Tickets
 
-# Listar servicio como solicitante
-![alt text](image-3.png)
+![Listar tickets](image.png)
 
-### Configuración de la Base de Datos
-## Conexión manejada por medio de SQLAlchemy
-## Schema asignado: jwt_grupo_2
+### Crear Usuario
+
+![Crear usuario](image-4.png)
+
+### Listar Usuarios
+
+![Listar usuarios](image-5.png)
+
+### Asignar Ticket
+
+![Asignar ticket](image-1.png)
+
+### Crear Ticket
+
+![Crear ticket](image-2.png)
+
+### Listar Servicios
+
+![Listar servicios](image-3.png)
+
+---
+
+# Base de Datos
+
+* Motor: PostgreSQL
+* ORM: SQLAlchemy
+* Schema: `jwt_grupo_2`
