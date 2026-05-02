@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from app.models import Laboratorio
 from app.schemas.laboratorio import LaboratorioCreate
 
-def get_laboratorios(db: Session):
+def obtener_laboratorios(db: Session):
     return db.query(Laboratorio).all()
 
 def crear_laboratorio(db: Session, laboratorio: LaboratorioCreate):
@@ -12,5 +12,13 @@ def crear_laboratorio(db: Session, laboratorio: LaboratorioCreate):
     db.refresh(db_lab)
     return db_lab
 
-def get_laboratorio_by_id(db: Session, id_laboratorio: int):
+def obtener_laboratorio_por_id(db: Session, id_laboratorio: int):
     return db.query(Laboratorio).filter(Laboratorio.id_laboratorio == id_laboratorio).first()
+
+def eliminar_laboratorio(db: Session, id_laboratorio: int):
+    db_lab = db.query(Laboratorio).filter(Laboratorio.id_laboratorio == id_laboratorio).first()
+    if db_lab:
+        db.delete(db_lab)
+        db.commit()
+        return True
+    return False

@@ -25,3 +25,11 @@ def crear_usuario(db: Session, usuario: UsuarioCreate):
     db.commit()
     db.refresh(db_usuario)
     return db_usuario
+
+def eliminar_usuario(db: Session, user_id: int):
+    db_usuario = db.query(Usuario).filter(Usuario.id_usuario == user_id).first()
+    if db_usuario:
+        db.delete(db_usuario)
+        db.commit()
+        return True
+    return False

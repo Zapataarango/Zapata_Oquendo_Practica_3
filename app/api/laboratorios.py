@@ -16,11 +16,22 @@ def crear_laboratorio(laboratorio: schemas.LaboratorioCreate, db: Session = Depe
 
 @router.get("/", response_model=List[schemas.LaboratorioOut], dependencies=[Depends(require_scopes("laboratorios:read"))])
 def listar_laboratorios(db: Session = Depends(get_db)):
-    return crud.get_laboratorios(db)
+    return crud.obtener_laboratorios(db)
 
 @router.get("/{id_laboratorio}", response_model=schemas.LaboratorioOut, dependencies=[Depends(require_scopes("laboratorios:read"))])
 def obtener_laboratorio(id_laboratorio: int, db: Session = Depends(get_db)):
-    lab = crud.get_laboratorio_by_id(db, id_laboratorio)
+    lab = crud.obtener_laboratorio_por_id(db, id_laboratorio)
     if not lab:
         raise HTTPException(status_code=404, detail="Laboratorio no encontrado")
     return lab
+
+@router.delete("/{id_laboratorio}", status_code=204)
+def borrar_laboratorio(
+    id_laboratorio: int, 
+    db: Session = Depends(get_db),
+    current_user = Depends(require_scopes("laboratorios:delete"))
+):
+    exito = crud.eliminar_laboratorio(db, id_laboratorio)
+    if not exito:
+        raise HTTPException(status_code=404, detail="Laboratorio no encontrado")
+    return None

@@ -1,10 +1,12 @@
 SCOPES_BY_ROLE = {
     "admin": {
-
-        "tickets:create",     
-        "tickets:read",       
-        "tickets:update",     
-        "tickets:delete",     
+        "tickets:crear",
+        "tickets:ver_propios",
+        "tickets:recibir",
+        "tickets:asignar",
+        "tickets:atender",
+        "tickets:finalizar",
+        "tickets:ver_todos",     
         
         "usuarios:create",
         "usuarios:read",
@@ -15,28 +17,27 @@ SCOPES_BY_ROLE = {
         
         "servicios:read",
         "servicios:create"
+
     },
     "solicitante": {
-        "tickets:create",   
-        "tickets:read",      
+        "tickets:crear",
+        "tickets:ver_propios"
     },
     "responsable_tecnico": {
-        "tickets:read",       
-        "tickets:update",     
+        "tickets:ver_propios",
+        "tickets:recibir",
+        "tickets:asignar",
+        "tickets:finalizar"
     },
     "auxiliar": {
-        "tickets:read",        
-        "tickets:update",      
+        "tickets:ver_propios",
+        "tickets:atender"
     },
     "tecnico_especializado": {
-        "tickets:read",        
-        "tickets:update",      
-    },
+        "tickets:ver_propios",
+        "tickets:atender"
+    }
 }
 
 def get_scopes_for_role(role: str) -> set[str]:
-    """
-    Retorna el conjunto de permisos (scopes) asociados a un rol específico.
-    Si el rol no existe, retorna un conjunto vacío.
-    """
     return SCOPES_BY_ROLE.get(role, set())

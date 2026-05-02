@@ -16,11 +16,22 @@ def crear_servicio(servicio: schemas.ServicioCreate, db: Session = Depends(get_d
 
 @router.get("/", response_model=List[schemas.ServicioOut], dependencies=[Depends(require_scopes("servicios:read"))])
 def listar_servicios(db: Session = Depends(get_db)):
-    return crud.get_servicios(db)
+    return crud.obtener_servicios(db)
 
 @router.get("/{id_servicio}", response_model=schemas.ServicioOut, dependencies=[Depends(require_scopes("servicios:read"))])
 def obtener_servicio(id_servicio: int, db: Session = Depends(get_db)):
-    srv = crud.get_servicio_by_id(db, id_servicio)
+    srv = crud.obtener_servicio_por_id(db, id_servicio)
     if not srv:
         raise HTTPException(status_code=404, detail="Servicio no encontrado")
     return srv
+
+@router.delete("/{id_servicio}", status_code=204)
+def borrar_servicio(
+    id_servicio: int, 
+    db: Session = Depends(get_db),
+    current_user = Depends(require_scopes("servicios:delete"))
+):
+    exito = crud.eliminar_servicio(db, id_servicio)
+    if not exito:
+        raise HTTPException(status_code=404, detail="Servicio no encontrado")
+    return None
