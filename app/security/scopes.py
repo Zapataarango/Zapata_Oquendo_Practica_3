@@ -1,35 +1,36 @@
 SCOPES_BY_ROLE = {
     "admin": {
-        "tickets:crear",
-        "tickets:ver_propios",
-        "tickets:recibir",
-        "tickets:asignar",
-        "tickets:atender",
-        "tickets:finalizar",
-        "tickets:ver_todos",
-        "usuarios:gestionar",
-        "laboratorios:read", 
+
+        "tickets:create",     
+        "tickets:read",       
+        "tickets:update",     
+        "tickets:delete",     
+        
+        "usuarios:create",
+        "usuarios:read",
+        "usuarios:update",
+    
+        "laboratorios:read",
         "laboratorios:create",
+        
         "servicios:read",
         "servicios:create"
     },
     "solicitante": {
-        "tickets:crear",
-        "tickets:ver_propios",
+        "tickets:create",   
+        "tickets:read",      
     },
     "responsable_tecnico": {
-        "tickets:ver_propios",
-        "tickets:recibir",
-        "tickets:asignar",
-        "tickets:finalizar",
+        "tickets:read",       
+        "tickets:update",     
     },
     "auxiliar": {
-        "tickets:ver_propios",
-        "tickets:atender",
+        "tickets:read",        
+        "tickets:update",      
     },
     "tecnico_especializado": {
-        "tickets:ver_propios",
-        "tickets:atender",
+        "tickets:read",        
+        "tickets:update",      
     },
 }
 

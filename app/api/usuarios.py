@@ -10,17 +10,24 @@ router = APIRouter(
     tags=["Usuarios"],
 )
 
-@router.post("/", response_model=schemas.UsuarioOut, dependencies=[Depends(require_scopes("usuarios:create"))])
+@router.post("/", response_model=schemas.UsuarioOut)
 def crear_usuario(usuario: schemas.UsuarioCreate, db: Session = Depends(get_db)):
     return crud.crear_usuario(db, usuario)
 
 @router.get("/", response_model=List[schemas.UsuarioOut], dependencies=[Depends(require_scopes("usuarios:read"))])
 def listar_usuarios(db: Session = Depends(get_db)):
-    return crud.get_usuarios(db)
+    return crud.listar_usuarios(db) # Cambiado a get_users
 
 @router.get("/{id_usuario}", response_model=schemas.UsuarioOut, dependencies=[Depends(require_scopes("usuarios:read"))])
-def obtener_usuario(id_usuario: int, db: Session = Depends(get_db)):
-    usuario = crud.get_usuario_by_id(db, id_usuario)
+def obtener_usuario_id(id_usuario: int, db: Session = Depends(get_db)): # Nombre único
+    usuario = crud.obtener_usuario_por_id(db, id_usuario)
+    if not usuario:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    return usuario
+
+@router.get("/email/{correo_usuario}", response_model=schemas.UsuarioOut, dependencies=[Depends(require_scopes("usuarios:read"))])
+def obtener_usuario_email(correo_usuario: str, db: Session = Depends(get_db)): # str, no int
+    usuario = crud.obtener_usuario_por_correo(db, correo_usuario)
     if not usuario:
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
     return usuario
