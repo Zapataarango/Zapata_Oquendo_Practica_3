@@ -1,33 +1,32 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, text
-from sqlalchemy.orm import relationship
-from app.db import Base
+from sqlalchemy.orm import Session
+from datetime import datetime, timezone
+from app.models import Ticket
+from app.schemas.ticket import TicketCreate, TicketUpdateEstado
 
-class Ticket(Base):
-    __tablename__ = "tickets"
-    __table_args__ = {"schema": "Laboratorios"}
+def crear_ticket(db: Session, ticket: TicketCreate, id_solicitante: int):
+    db_ticket = Ticket(
+        **ticket.model_dump(),
+        id_solicitante=id_solicitante,
+        estado="solicitado"
+    )
+    db.add(db_ticket)
+    db.commit()
+    db.refresh(db_ticket)
+    return db_ticket
 
-    id_ticket = Column(Integer, primary_key=True, index=True)
-    
-    id_solicitante = Column(Integer, ForeignKey("Laboratorios.usuarios.id_usuario"), nullable=False)
-    id_laboratorio = Column(Integer, ForeignKey("Laboratorios.laboratorios.id_laboratorio"), nullable=False)
-    id_servicio = Column(Integer, ForeignKey("Laboratorios.servicios.id_servicio"), nullable=False)
-    id_responsable = Column(Integer, ForeignKey("Laboratorios.usuarios.id_usuario"), nullable=True)
-    id_asignado = Column(Integer, ForeignKey("Laboratorios.usuarios.id_usuario"), nullable=True)
+def get_tickets(db: Session):
+    return db.query(Ticket).all()
 
-    titulo = Column(String(150), nullable=False)
-    descripcion = Column(String(500), nullable=False)
-    estado = Column(String(50), nullable=False, server_default=text("'abierto'"))
-    prioridad = Column(String(20), nullable=False)
-    
-    observacion_responsable = Column(String(500), nullable=True)
-    observacion_tecnico = Column(String(500), nullable=True)
+def get_ticket_by_id(db: Session, ticket_id: int):
+    return db.query(Ticket).filter(Ticket.id_ticket == ticket_id).first()
 
-    fecha_creacion = Column(DateTime, nullable=False, server_default=text("CURRENT_TIMESTAMP"))
-    fecha_actualizacion = Column(DateTime, nullable=True, onupdate=text("CURRENT_TIMESTAMP"))
-    fecha_finalizacion = Column(DateTime, nullable=True)
-
-    solicitante = relationship("Usuario", foreign_keys=[id_solicitante], back_populates="tickets_solicitados")
-    laboratorio = relationship("Laboratorio", back_populates="tickets")
-    servicio = relationship("Servicio", back_populates="tickets")
-    responsable = relationship("Usuario", foreign_keys=[id_responsable], back_populates="tickets_gestionados")
-    tecnico_asignado = relationship("Usuario", foreign_keys=[id_asignado], back_populates="tickets_asignados")
+def actualizar_estado_ticket(db: Session, ticket_id: int, update_data: TicketUpdateEstado):
+    db_ticket = get_ticket_by_id(db, ticket_id)
+    if db_ticket:
+        db_ticket.estado = update_data.estado
+        if update_data.estado == "finalizado":
+            db_ticket.fecha_finalizacion = datetime.now(timezone.utc)
+        
+        db.commit()
+        db.refresh(db_ticket)
+    return db_ticket

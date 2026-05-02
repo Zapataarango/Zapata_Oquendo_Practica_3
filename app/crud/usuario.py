@@ -1,18 +1,28 @@
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, text
-from sqlalchemy.orm import relationship
-from app.db import Base
+from sqlalchemy.orm import Session
+from app.models import Usuario
+from app.schemas.usuario import UsuarioCreate
+from app.security.auth import hash_password
 
-class Usuario(Base):
-    __tablename__ = "usuarios"
-    __table_args__ = {"schema": "Laboratorios"}
+def get_user_by_email(db: Session, email: str):
+    return db.query(Usuario).filter(Usuario.correo == email).first()
 
-    id_usuario = Column(Integer, primary_key=True, index=True)
-    nombre = Column(String(100), nullable=False)
-    correo = Column(String(150), nullable=False, unique=True)
-    password_hash = Column(String(255), nullable=False)
-    rol = Column(String(50), nullable=False)
-    activo = Column(Boolean, nullable=False, server_default=text("true"))
-    
-    tickets_solicitados = relationship("Ticket", foreign_keys="[Ticket.id_solicitante]", back_populates="solicitante")
-    tickets_gestionados = relationship("Ticket", foreign_keys="[Ticket.id_responsable]", back_populates="responsable")
-    tickets_asignados = relationship("Ticket", foreign_keys="[Ticket.id_asignado]", back_populates="tecnico_asignado")
+def get_user_by_id(db: Session, user_id: int):
+    return db.query(Usuario).filter(Usuario.id_usuario == user_id).first()
+
+def get_users(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(Usuario).offset(skip).limit(limit).all()
+
+def crear_usuario(db: Session, usuario: UsuarioCreate):
+    # Encriptamos la contraseña antes de guardar
+    hashed_pwd = hash_password(usuario.password)
+    db_usuario = Usuario(
+        nombre=usuario.nombre,
+        correo=usuario.correo,
+        rol=usuario.rol,
+        password_hash=hashed_pwd,
+        activo=True
+    )
+    db.add(db_usuario)
+    db.commit()
+    db.refresh(db_usuario)
+    return db_usuario

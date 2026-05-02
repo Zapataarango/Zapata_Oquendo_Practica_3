@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta, timezone
 import os
-from jose import jwt
+from jose import jwt, JWTError
 from dotenv import load_dotenv
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
@@ -31,9 +31,6 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
 
 def create_access_token(data: dict) -> str:
-    """
-    Genera un token JWT firmado.
-    """
     expire = datetime.now(timezone.utc) + timedelta(
         minutes=ACCESS_TOKEN_EXPIRE_MINUTES
     )
@@ -47,41 +44,36 @@ def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(security),
     db: Session = Depends(get_db),
 ):
-    """
-    Valida el token y retorna el objeto Usuario desde la base de datos.
-    """
     token = credentials.credentials
 
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         correo = payload.get("sub")
-    except jwt.PyJWTError:
+    except JWTError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, 
-            detail="Token inválido o expirado",
+            detail="Token inválido, mal formado o expirado",
             headers={"WWW-Authenticate": "Bearer"},
         )
 
     if correo is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, 
-            detail="Token no contiene información de identidad"
+            detail="El token no contiene el campo 'sub' (correo)"
         )
 
     user = db.query(Usuario).filter(Usuario.correo == correo).first()
 
     if user is None:
-        raise HTTPException(status_code=401, detail="Usuario no encontrado")
+        raise HTTPException(status_code=401, detail="Usuario no encontrado en la base de datos")
     
     if not user.activo:
-        raise HTTPException(status_code=401, detail="Usuario inactivo")
+        raise HTTPException(status_code=401, detail="La cuenta de usuario está desactivada")
 
     return user
 
 def require_scopes(required_scope: str):
-    """
-    Verifica si el usuario actual posee el permiso necesario según su rol.
-    """
+
     def dependency(user=Depends(get_current_user)):
         user_scopes = get_scopes_for_role(user.rol)
         
